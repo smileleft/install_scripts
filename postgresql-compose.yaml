@@ -1,0 +1,19 @@
+services:
+  postgresql:
+    image: postgres:17.5
+    container_name: postgresql
+    hostname: postgresql
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_DB: mydatabase
+      POSTGRES_USER: myuser
+      POSTGRES_PASSWORD: Telepixs2775t
+    volumes:
+      - postgresql_data:/var/lib/postgresql/data
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+    restart: always
+    command: postgres -c 'listen_addresses=0.0.0.0' # allow connection from everywhere
+
+volumes:
+  postgresql_data:
