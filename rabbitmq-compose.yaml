@@ -1,0 +1,17 @@
+services:
+  rabbitmq:
+    image: rabbitmq:4.1.2-management # latest version
+    container_name: rabbitmq
+    hostname: rabbitmq
+    ports:
+      - "5672:5672" # AMQP port
+      - "15672:15672" # RabbitMQ Management UI port
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq # 데이터 영속성을 위한 볼륨
+    restart: always
+
+volumes:
+  rabbitmq_data:
