@@ -2,5 +2,6 @@
 script for various servers  <br>
 postgres-primary.sh  <br> 
 postgres-standby.sh  <br>
+postgresql-compose.yaml  <br>
 
 
