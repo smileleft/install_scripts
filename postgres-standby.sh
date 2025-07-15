@@ -26,3 +26,12 @@ sudo sed -i "s/#hot_standby = on/hot_standby = on/" $PGCONF
 
 # Start PostgreSQL
 sudo systemctl start postgresql
+
+# Create template extension db (optional)
+sudo -u postgres createdb extensiondb
+
+# Install extensions (even if not used immediately, helps future promotion)
+sudo -u postgres psql -d extensiondb -c "CREATE EXTENSION IF NOT EXISTS pgcrypto;"
+sudo -u postgres psql -d extensiondb -c "CREATE EXTENSION IF NOT EXISTS vector;"
+
+echo "✅ Standby PostgreSQL install and pgcrypto, pgvector extension enable completed"

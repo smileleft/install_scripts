@@ -28,3 +28,12 @@ echo "host replication replicator {your_ip}/32 md5" | sudo tee -a $PGHBA
 # Restart and create replicator user
 sudo systemctl restart postgresql
 sudo -u postgres psql -c "CREATE ROLE replicator REPLICATION LOGIN ENCRYPTED PASSWORD 'Telepix_Replica_pass';"
+
+# Create template extension db (optional)
+sudo -u postgres createdb extensiondb
+
+# Install extensions
+sudo -u postgres psql -d extensiondb -c "CREATE EXTENSION IF NOT EXISTS pgcrypto;"
+sudo -u postgres psql -d extensiondb -c "CREATE EXTENSION IF NOT EXISTS vector;"
+
+echo "✅ Primary PostgreSQL install and pgcrypto, pgvector extension enable completed"
