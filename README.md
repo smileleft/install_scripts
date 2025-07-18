@@ -6,4 +6,6 @@ postgresql-compose.yaml  <br>
 rabbit-primary.sh  <br>
 rabbit-secondary.sh <br>
 rabbitmq-compose.yaml  <br>
-n8n-compose.yaml
+n8n-compose.yaml  <br>
+infisical-compose.yaml <br>
+.env.sample
