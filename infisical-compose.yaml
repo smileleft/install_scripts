@@ -8,3 +8,8 @@ servvices:
       - 80:8080
     environment:
       - NODE_ENV=production
+    networks:
+      - infisical
+
+  networks:
+    infisical:
