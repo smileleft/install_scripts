@@ -1,0 +1,43 @@
+services:
+  prometheus:
+    image: prom/prometheus
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+    ports:
+      - "9090:9090"
+
+  influxdb:
+    image: influxdb:1.8 # Using InfluxDB 1.x for simpler setup with Grafana.
+                        # For InfluxDB 2.x, the setup is more complex (tokens, organizations).
+    container_name: influxdb
+    ports:
+      - "8086:8086" # Expose InfluxDB HTTP API port
+    volumes:
+      - ./influxdb_data:/var/lib/influxdb # Persist data
+    environment:
+      - INFLUXDB_DB=mydb # Default database to create
+      - INFLUXDB_ADMIN_USER=admin # Admin user for initial setup
+      - INFLUXDB_ADMIN_PASSWORD=your_influxdb_admin_password # Admin password
+      - INFLUXDB_USER=grafana_user # User for Grafana
+      - INFLUXDB_USER_PASSWORD=your_grafana_user_password # Password for Grafana user
+    restart: always
+
+  grafana:
+    image: grafana/grafana:latest
+    container_name: grafana
+    ports:
+      - "3000:3000"
+    volumes:
+      - grafana-storage:/var/lib/grafana
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+      - GF_SECURITY_ADMIN_PASSWORD=your_grafana_admin_password
+      - GF_PATHS_PROVISIONING=/etc/grafana/provisioning
+      - GF_PROVISIONING_DATASOURCES_PATH=/etc/grafana/provisioning/datasources
+    depends_on:
+      - influxdb
+    restart: always
+
+volumes:
+  grafana-storage:
+
