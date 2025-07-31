@@ -1,5 +1,5 @@
 services:
-  # 클러스터의 기준이 되는 첫 번째 노드
+  # main node
   rabbitmq1:
     image: rabbitmq:4.1.2-management
     container_name: rabbitmq1
@@ -23,7 +23,7 @@ services:
       timeout: 5s
       retries: 5
 
-  # 클러스터에 참여할 두 번째 노드
+  # second node
   rabbitmq2:
     image: rabbitmq:4.1.2-management
     container_name: rabbitmq2
