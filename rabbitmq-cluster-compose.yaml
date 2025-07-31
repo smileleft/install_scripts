@@ -1,0 +1,55 @@
+services:
+  # 클러스터의 기준이 되는 첫 번째 노드
+  rabbitmq1:
+    image: rabbitmq:4.1.2-management
+    container_name: rabbitmq1
+    hostname: rabbitmq1
+    environment:
+      # ERLANG_COOKIE는 클러스터 노드들이 서로를 인증하는 데 사용하는 비밀 키입니다.
+      # 모든 노드가 반드시 동일한 값을 가져야 합니다.
+      - RABBITMQ_ERLANG_COOKIE=your-super-secret-erlang-cookie
+      - RABBITMQ_DEFAULT_USER=telepix
+      - RABBITMQ_DEFAULT_PASS=our_rabbit_password
+    ports:
+      - "5672:5672"   # AMQP 프로토콜 포트
+      - "15672:15672" # 관리자 UI 포트
+    networks:
+      - rabbitmq-net
+    volumes:
+      - rabbitmq1-data:/var/lib/rabbitmq
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "-q", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # 클러스터에 참여할 두 번째 노드
+  rabbitmq2:
+    image: rabbitmq:4.1.2-management
+    container_name: rabbitmq2
+    hostname: rabbitmq2
+    environment:
+      # 첫 번째 노드와 반드시 동일한 쿠키 값을 사용해야 합니다.
+      - RABBITMQ_ERLANG_COOKIE=your-super-secret-erlang-cookie
+    networks:
+      - rabbitmq-net
+    volumes:
+      - rabbitmq2-data:/var/lib/rabbitmq
+    depends_on:
+      rabbitmq1:
+        condition: service_healthy # rabbitmq1이 건강한 상태일 때만 시작
+    command: >
+      sh -c "rabbitmq-server &
+             sleep 15 &&
+             rabbitmqctl stop_app &&
+             rabbitmqctl join_cluster rabbit@rabbitmq1 &&
+             rabbitmqctl start_app &&
+             fg"
+
+networks:
+  rabbitmq-net:
+    driver: bridge
+
+volumes:
+  rabbitmq1-data:
+  rabbitmq2-data:
