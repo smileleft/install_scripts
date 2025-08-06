@@ -1,0 +1,21 @@
+services:
+  rabbitmq-primary:
+    image: rabbitmq:4.1.2-management
+    container_name: rabbitmq-primary
+    hostname: rabbitmq-primary
+    environment:
+      RABBITMQ_DEFAULT_USER: ${RABBITMQ_USER}
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_PASSWORD}
+      RABBITMQ_ERLANG_COOKIE: ${RABBITMQ_ERLANG_COOKIE}
+    ports:
+      - "15672:15672"   # Management UI
+      - "5672:5672"     # AMQP
+      - "25672:25672"   # Erlang Distribution Port
+      - "4369:4369"     # Erlang Port Mapper Daemon
+      - "15692:15692"   # Prometheus Metrics
+    volumes:
+      - rabbitmq_primary_data:/var/lib/rabbitmq
+    restart: unless-stopped
+
+volumes:
+  rabbitmq_primary_data:

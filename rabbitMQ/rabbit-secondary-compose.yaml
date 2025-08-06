@@ -1,0 +1,30 @@
+services:
+  rabbitmq-secondary:
+    image: rabbitmq:4.1.2-management
+    container_name: rabbitmq-secondary
+    hostname: rabbitmq-secondary
+    environment:
+      RABBITMQ_DEFAULT_USER: ${RABBITMQ_USER}
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_PASSWORD}
+      RABBITMQ_ERLANG_COOKIE: ${RABBITMQ_ERLANG_COOKIE}
+      RABBITMQ_PRIMARY_HOST: ${RABBITMQ_PRIMARY_SERVER}
+    command: >
+      bash -c "rabbitmq-server --detached &&
+               rabbitmqctl stop_app &&
+               rabbitmqctl join_cluster rabbit@\$RABBITMQ_PRIMARY_HOST &&
+               rabbitmqctl change_cluster_node_type disc &&
+               rabbitmqctl start_app &&
+               tail -f /dev/null"
+    depends_on: []
+    ports:
+      - "15672:15672"   # Management UI
+      - "5672:5672"     # AMQP
+      - "25672:25672"   # Erlang Distribution Port
+      - "4369:4369"     # Erlang Port Mapper Daemon
+      - "15692:15692"   # Prometheus Metrics
+    volumes:
+      - rabbitmq_secondary_data:/var/lib/rabbitmq
+    restart: unless-stopped
+
+volumes:
+  rabbitmq_secondary_data:
