@@ -7,10 +7,6 @@ services:
       RABBITMQ_DEFAULT_USER: ${RABBITMQ_USER}
       RABBITMQ_DEFAULT_PASS: ${RABBITMQ_PASSWORD}
       RABBITMQ_ERLANG_COOKIE: ${RABBITMQ_ERLANG_COOKIE}
-      #RABBITMQ_PRIMARY_HOST: ${RABBITMQ_PRIMARY_SERVER}
-      JOIN_CLUSTER_HOST: ${RABBITMQ_PRIMARY_SERVER}
-      RAM_NODE: false
-    depends_on: []
     ports:
       - "15672:15672"   # Management UI
       - "5672:5672"     # AMQP
@@ -18,9 +14,8 @@ services:
       - "4369:4369"     # Erlang Port Mapper Daemon
       - "15692:15692"   # Prometheus Metrics
     volumes:
-      - ./secondary-rabbit.sh:/usr/local/bin/rabbitmq-entrypoint.sh
-      - rabbitmq_secondary_data:/var/lib/rabbitmq
-    entrypoint: /usr/local/bin/rabbitmq-entrypoint.sh
+      - ./rabbitmq.conf:/etc/rabbitmq/rabbitmq.conf
+      - ./rabbitmq_secondary_data:/var/lib/rabbitmq
     restart: unless-stopped
 
 volumes:
