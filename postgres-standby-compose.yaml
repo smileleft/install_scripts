@@ -9,7 +9,7 @@ services:
       - POSTGRES_DB=${DB_NAME}
       - POSTGRES_USER=${DB_USER}
       - POSTGRES_PASSWORD=${DB_PASSWORD}
-      - PG_PRIMARY_HOST=${PG_PRIMARY_HOST}
+      - PG_PRIMARY_HOST=${PRIMARY_SERVER}
     volumes:
       - ./postgresql_data:/var/lib/postgresql/data
     restart: always
@@ -17,7 +17,7 @@ services:
       bash -c "
       if [ ! -s /var/lib/postgresql/data/PG_VERSION ]; then
         echo 'Cloning data from primary...'
-        pg_basebackup -h PG-PRIMARY-HOST -D /var/lib/postgresql/data -U replicator -Fp -Xs -P -R
+        pg_basebackup -h \$PG_PRIMARY_HOST -D /var/lib/postgresql/data -U replicator -Fp -Xs -P -R
       fi &&
       exec docker-entrypoint.sh postgres"
 
