@@ -14,7 +14,9 @@ services:
       - "4369:4369"     # Erlang Port Mapper Daemon
       - "15692:15692"   # Prometheus Metrics
     volumes:
+      - ./primary-rabbit.sh:/usr/local/bin/rabbitmq-entrypoint.sh
       - rabbitmq_primary_data:/var/lib/rabbitmq
+    entrypoint: /usr/local/bin/rabbitmq-entrypoint.sh
     restart: unless-stopped
 
 volumes:

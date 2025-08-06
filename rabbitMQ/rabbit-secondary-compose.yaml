@@ -7,14 +7,9 @@ services:
       RABBITMQ_DEFAULT_USER: ${RABBITMQ_USER}
       RABBITMQ_DEFAULT_PASS: ${RABBITMQ_PASSWORD}
       RABBITMQ_ERLANG_COOKIE: ${RABBITMQ_ERLANG_COOKIE}
-      RABBITMQ_PRIMARY_HOST: ${RABBITMQ_PRIMARY_SERVER}
-    command: >
-      bash -c "rabbitmq-server --detached &&
-               rabbitmqctl stop_app &&
-               rabbitmqctl join_cluster rabbit@\$RABBITMQ_PRIMARY_HOST &&
-               rabbitmqctl change_cluster_node_type disc &&
-               rabbitmqctl start_app &&
-               tail -f /dev/null"
+      #RABBITMQ_PRIMARY_HOST: ${RABBITMQ_PRIMARY_SERVER}
+      JOIN_CLUSTER_HOST: ${RABBITMQ_PRIMARY_SERVER}
+      RAM_NODE: false
     depends_on: []
     ports:
       - "15672:15672"   # Management UI
@@ -23,7 +18,9 @@ services:
       - "4369:4369"     # Erlang Port Mapper Daemon
       - "15692:15692"   # Prometheus Metrics
     volumes:
+      - ./secondary-rabbit.sh:/usr/local/bin/rabbitmq-entrypoint.sh
       - rabbitmq_secondary_data:/var/lib/rabbitmq
+    entrypoint: /usr/local/bin/rabbitmq-entrypoint.sh
     restart: unless-stopped
 
 volumes:
