@@ -1,7 +1,6 @@
 #!/bin/bash
 
 CONTAINER_NAME=pg-primary
-STANDBY_HOST=10.0.10.27
 
 echo "[1] Create replication user..."
 docker exec -u root $CONTAINER_NAME psql -U $DB_USER -d $DB_NAME -c \

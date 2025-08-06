@@ -1,7 +1,6 @@
 #!/bin/bash
 
 CONTAINER_NAME=pg-standby
-PRIMARY_HOST=10.0.10.25
 
 echo "[1] Stop standby container..."
 docker stop $CONTAINER_NAME
