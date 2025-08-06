@@ -1,0 +1,25 @@
+services:
+  pg-standby:
+    image: pgvector/pgvector:pg17
+    container_name: pg-standby
+    hostname: pg-standby
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_DB=${DB_NAME}
+      - POSTGRES_USER=${DB_USER}
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+      - PG_PRIMARY_HOST=${PG_PRIMARY_HOST}
+    volumes:
+      - ./postgresql_data:/var/lib/postgresql/data
+    restart: always
+    command: >
+      bash -c "
+      if [ ! -s /var/lib/postgresql/data/PG_VERSION ]; then
+        echo 'Cloning data from primary...'
+        pg_basebackup -h PG-PRIMARY-HOST -D /var/lib/postgresql/data -U replicator -Fp -Xs -P -R
+      fi &&
+      exec docker-entrypoint.sh postgres"
+
+volumes:
+  postgresql_data:
