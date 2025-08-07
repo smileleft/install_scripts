@@ -3,6 +3,7 @@ script for various backend system
 
 ## postgreSQL
 
+```
 ├── postgres-extensions.sql
 ├── postgres-primary-compose.yaml
 ├── postgres-primary.sh
@@ -11,6 +12,7 @@ script for various backend system
 ├── postgres-standby.sh
 ├── primary-postgres-setup.sh
 └── standby-postgres-setup.sh
+```
 
 ## rabbitMQ
 
