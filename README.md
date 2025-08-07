@@ -1,11 +1,11 @@
 # install_scripts
 script for various backend system
 
-## posrgreSQL
+## postgreSQL
 
-postgres-primary.sh  <br> 
-postgres-standby.sh  <br>
-postgresql-compose.yaml  <br>
+postgreSQL/postgres-primary.sh
+postgreSQL/postgres-standby.sh
+postgreSQL/postgresql-compose.yaml
 
 ## rabbitMQ
 
