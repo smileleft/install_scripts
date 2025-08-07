@@ -3,9 +3,14 @@ script for various backend system
 
 ## postgreSQL
 
-postgreSQL/postgres-primary.sh
-postgreSQL/postgres-standby.sh
-postgreSQL/postgresql-compose.yaml
+├── postgres-extensions.sql
+├── postgres-primary-compose.yaml
+├── postgres-primary.sh
+├── postgresql-compose.yaml
+├── postgres-standby-compose.yaml
+├── postgres-standby.sh
+├── primary-postgres-setup.sh
+└── standby-postgres-setup.sh
 
 ## rabbitMQ
 
