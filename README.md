@@ -5,7 +5,8 @@ script for various backend system
 
 ```
 |── pgvector-pgautofailover
-|  |── check_primary.sh
+|  |── Dockerfile
+|── check_primary.sh
 ├── postgres-extensions.sql
 ├── postgres-primary-compose.yaml
 ├── postgres-primary.sh
