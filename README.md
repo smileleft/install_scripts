@@ -4,6 +4,8 @@ script for various backend system
 ## postgreSQL
 
 ```
+|── pgvector-pgautofailover
+|  |── check_primary.sh
 ├── postgres-extensions.sql
 ├── postgres-primary-compose.yaml
 ├── postgres-primary.sh
@@ -20,6 +22,7 @@ rabbit-primary.sh  <br>
 rabbit-secondary.sh <br>
 rabbitmq-compose.yaml  <br>
 rabbitmq-cluster-compose.yaml  <br>
+
 
 ## n8n
 
