@@ -4,17 +4,20 @@ script for various backend system
 ## postgreSQL
 
 ```
-|── pgvector-pgautofailover
-|  |── Dockerfile
-|── check_primary.sh
-├── postgres-extensions.sql
-├── postgres-primary-compose.yaml
-├── postgres-primary.sh
-├── postgresql-compose.yaml
-├── postgres-standby-compose.yaml
-├── postgres-standby.sh
-├── primary-postgres-setup.sh
-└── standby-postgres-setup.sh
+├── postgreSQL
+│   ├── check_is_primary.sh
+│   ├── pg_client_install.sh
+│   ├── pgvector-pgautofailover
+│   │   └── Dockerfile
+│   ├── postgres-extensions.sql
+│   ├── postgres-primary-compose.yaml
+│   ├── postgres-primary.sh
+│   ├── postgres-standby-compose.yaml
+│   ├── postgres-standby.sh
+│   ├── postgresql-compose.yaml
+│   ├── primary-postgres-setup.sh
+│   ├── promote_primary.sh
+│   └── standby-postgres-setup.sh
 ```
 
 ## rabbitMQ
