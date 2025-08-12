@@ -1,0 +1,262 @@
+{
+    "dashboard": {
+        "id": null,
+        "uid": null,
+        "title": "Python GC & Process Metrics",
+        "tags": [
+            "python",
+            "metrics",
+            "gc",
+            "process"
+        ],
+        "timezone": "browser",
+        "schemaVersion": 38,
+        "version": 1,
+        "refresh": "10s",
+        "panels": [
+            {
+                "type": "graph",
+                "title": "GC Collected Objects by Generation",
+                "id": 1,
+                "datasource": {
+                    "type": "prometheus",
+                    "uid": "PROMETHEUS_DS_UID"
+                },
+                "targets": [
+                    {
+                        "expr": "python_gc_objects_collected_total{generation=\"0\"}",
+                        "legendFormat": "gen 0",
+                        "refId": "A"
+                    },
+                    {
+                        "expr": "python_gc_objects_collected_total{generation=\"1\"}",
+                        "legendFormat": "gen 1",
+                        "refId": "B"
+                    },
+                    {
+                        "expr": "python_gc_objects_collected_total{generation=\"2\"}",
+                        "legendFormat": "gen 2",
+                        "refId": "C"
+                    }
+                ],
+                "gridPos": {
+                    "x": 0,
+                    "y": 0,
+                    "w": 12,
+                    "h": 8
+                }
+            },
+            {
+                "type": "graph",
+                "title": "GC Collections Total",
+                "id": 2,
+                "datasource": {
+                    "type": "prometheus",
+                    "uid": "PROMETHEUS_DS_UID"
+                },
+                "targets": [
+                    {
+                        "expr": "python_gc_collections_total{generation=\"0\"}",
+                        "legendFormat": "gen 0",
+                        "refId": "A"
+                    },
+                    {
+                        "expr": "python_gc_collections_total{generation=\"1\"}",
+                        "legendFormat": "gen 1",
+                        "refId": "B"
+                    },
+                    {
+                        "expr": "python_gc_collections_total{generation=\"2\"}",
+                        "legendFormat": "gen 2",
+                        "refId": "C"
+                    }
+                ],
+                "gridPos": {
+                    "x": 12,
+                    "y": 0,
+                    "w": 12,
+                    "h": 8
+                }
+            },
+            {
+                "type": "stat",
+                "title": "Resident Memory (bytes)",
+                "id": 3,
+                "datasource": {
+                    "type": "prometheus",
+                    "uid": "PROMETHEUS_DS_UID"
+                },
+                "targets": [
+                    {
+                        "expr": "process_resident_memory_bytes",
+                        "refId": "A"
+                    }
+                ],
+                "gridPos": {
+                    "x": 0,
+                    "y": 8,
+                    "w": 6,
+                    "h": 4
+                }
+            },
+            {
+                "type": "stat",
+                "title": "Virtual Memory (bytes)",
+                "id": 4,
+                "datasource": {
+                    "type": "prometheus",
+                    "uid": "PROMETHEUS_DS_UID"
+                },
+                "targets": [
+                    {
+                        "expr": "process_virtual_memory_bytes",
+                        "refId": "A"
+                    }
+                ],
+                "gridPos": {
+                    "x": 6,
+                    "y": 8,
+                    "w": 6,
+                    "h": 4
+                }
+            },
+            {
+                "type": "stat",
+                "title": "CPU Time (s)",
+                "id": 5,
+                "datasource": {
+                    "type": "prometheus",
+                    "uid": "PROMETHEUS_DS_UID"
+                },
+                "targets": [
+                    {
+                        "expr": "process_cpu_seconds_total",
+                        "refId": "A"
+                    }
+                ],
+                "gridPos": {
+                    "x": 12,
+                    "y": 8,
+                    "w": 6,
+                    "h": 4
+                }
+            },
+            {
+                "type": "stat",
+                "title": "Messages Processed",
+                "id": 6,
+                "datasource": {
+                    "type": "prometheus",
+                    "uid": "PROMETHEUS_DS_UID"
+                },
+                "targets": [
+                    {
+                        "expr": "messages_processed_total",
+                        "refId": "A"
+                    }
+                ],
+                "gridPos": {
+                    "x": 18,
+                    "y": 8,
+                    "w": 6,
+                    "h": 4
+                }
+            },
+            {
+                "type": "stat",
+                "title": "Messages Failed",
+                "id": 7,
+                "datasource": {
+                    "type": "prometheus",
+                    "uid": "PROMETHEUS_DS_UID"
+                },
+                "targets": [
+                    {
+                        "expr": "messages_failed_total",
+                        "refId": "A"
+                    }
+                ],
+                "gridPos": {
+                    "x": 0,
+                    "y": 12,
+                    "w": 6,
+                    "h": 4
+                }
+            },
+            {
+                "type": "time_series",
+                "title": "Message Failure Rate (5m avg)",
+                "id": 8,
+                "datasource": {
+                    "type": "prometheus",
+                    "uid": "PROMETHEUS_DS_UID"
+                },
+                "targets": [
+                    {
+                        "expr": "rate(messages_failed_total[5m])",
+                        "legendFormat": "failures/sec",
+                        "refId": "A"
+                    }
+                ],
+                "gridPos": {
+                    "x": 6,
+                    "y": 12,
+                    "w": 12,
+                    "h": 6
+                },
+                "alert": {
+                    "alertRuleTags": {},
+                    "conditions": [
+                        {
+                            "evaluator": {
+                                "params": [
+                                    0.1
+                                ],
+                                "type": "gt"
+                            },
+                            "operator": {
+                                "type": "and"
+                            },
+                            "query": {
+                                "params": [
+                                    "A",
+                                    "5m",
+                                    "now"
+                                ]
+                            },
+                            "reducer": {
+                                "type": "avg"
+                            },
+                            "type": "query"
+                        }
+                    ],
+                    "data": [
+                        {
+                            "refId": "A",
+                            "relativeTimeRange": {
+                                "from": 300,
+                                "to": 0
+                            },
+                            "datasourceUid": "PROMETHEUS_DS_UID",
+                            "model": {
+                                "expr": "rate(messages_failed_total[5m])",
+                                "interval": "",
+                                "legendFormat": "failures/sec",
+                                "refId": "A"
+                            }
+                        }
+                    ],
+                    "executionErrorState": "alerting",
+                    "for": "5m",
+                    "frequency": "1m",
+                    "handler": 1,
+                    "name": "High Message Failure Rate",
+                    "noDataState": "no_data",
+                    "notifications": []
+                }
+            }
+        ]
+    },
+    "overwrite": true
+}
+
