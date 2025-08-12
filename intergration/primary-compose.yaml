@@ -1,0 +1,114 @@
+# primary-compose.yaml
+
+services:
+  postgres-primary:
+    build: ./postgres
+    container_name: postgres-primary
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+      - ./postgres/init-db.sh:/docker-entrypoint-initdb.d/init-db.sh
+    environment:
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=default_db # 기본 DB, init-db.sh에서 실제 DB 생성
+      - DB_SADB=${DB_SADB}
+      - DB_INFISICAL=${DB_INFISICAL}
+    command: >
+      -c wal_level=replica
+      -c hot_standby=on
+      -c max_wal_senders=10
+      -c max_replication_slots=10
+      -c hot_standby_feedback=on
+    restart: always
+
+  infisical-primary:
+    image: infisical/infisical:latest
+    container_name: infisical-primary
+    ports:
+      - "8080:3000"
+    env_file:
+      - ./.env
+    environment:
+      - DB_CONNECTION_URI=postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres-primary:5432/${DB_INFISICAL}
+    depends_on:
+      - postgres-primary
+    restart: always
+
+  rabbitmq1:
+    image: rabbitmq:4.1.2-management
+    container_name: rabbitmq1
+    hostname: primary-server # 클러스터링을 위한 호스트명
+    ports:
+      - "5672:5672" # AMQP port
+      - "15672:15672" # Management UI
+    volumes:
+      - rabbitmq-data:/var/lib/rabbitmq
+    environment:
+      - RABBITMQ_DEFAULT_USER=admin
+      - RABBITMQ_DEFAULT_PASS=your_strong_rabbit_password
+      - RABBITMQ_ERLANG_COOKIE=${RABBITMQ_ERLANG_COOKIE}
+      - RABBITMQ_NODENAME=rabbit@primary-server
+    restart: always
+
+  redis-master:
+    image: redis:7.2-alpine
+    container_name: redis-master
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-master-data:/data
+    restart: always
+
+  redis-sentinel1:
+    image: redis:7.2-alpine
+    container_name: redis-sentinel1
+    command: redis-sentinel /usr/local/etc/redis/sentinel.conf
+    ports:
+      - "26379:26379"
+    volumes:
+      - ./redis/sentinel.conf:/usr/local/etc/redis/sentinel.conf
+    depends_on:
+      - redis-master
+    restart: always
+    
+  prometheus:
+    image: prom/prometheus:v2.53.0
+    container_name: prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+      - prometheus_data:/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+    restart: always
+
+  grafana:
+    image: grafana/grafana:11.1.0
+    container_name: grafana
+    ports:
+      - "3000:3000"
+    volumes:
+      - grafana_data:/var/lib/grafana
+    depends_on:
+      - prometheus
+    restart: always
+  
+  influxdb:
+    image: influxdb:2.7.7
+    container_name: influxdb
+    ports:
+      - "8086:8086"
+    volumes:
+      - influxdb_data:/var/lib/influxdb2
+    restart: always
+
+volumes:
+  postgres-data:
+  rabbitmq-data:
+  redis-master-data:
+  prometheus_data:
+  grafana_data:
+  influxdb_data:

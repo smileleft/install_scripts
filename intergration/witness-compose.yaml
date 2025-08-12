@@ -1,0 +1,13 @@
+# witness-compose.yaml
+
+services:
+  redis-sentinel3:
+    image: redis:7.2-alpine
+    container_name: redis-sentinel3
+    command: redis-sentinel /usr/local/etc/redis/sentinel.conf
+    ports:
+      - "26379:26379"
+    volumes:
+      # 서버 1, 2와 동일한 sentinel.conf 파일을 사용합니다.
+      - ./redis/sentinel.conf:/usr/local/etc/redis/sentinel.conf
+    restart: always
