@@ -15,6 +15,7 @@ services:
       - POSTGRES_DB=default_db # 기본 DB, init-db.sh에서 실제 DB 생성
       - DB_SADB=${DB_SADB}
       - DB_INFISICAL=${DB_INFISICAL}
+      - DB_GRAFANA=${DB_GRAFANA}
     command: >
       -c wal_level=replica
       -c hot_standby=on
@@ -92,10 +93,10 @@ services:
       - "3000:3000"
     enviornment:
       - GF_DATABASE_TYPE=postgres
-      - GF_DATABASE_HOST=my-postgres-host:5432
-      - GF_DATABASE_NAME=grafana
-      - GF_DATABASE_USER=grafana_user
-      - GF_DATABASE_PASSWORD=super_secret_pw
+      - GF_DATABASE_HOST=postgres-primary:5432
+      - GF_DATABASE_NAME=${DB_GRAFANA}
+      - GF_DATABASE_USER=${POSTGRES_USER}
+      - GF_DATABASE_PASSWORD=${POSTGRES_PASSWORD}
       - GF_SECURITY_ADMIN_USER=admin
       - GF_SECURITY_ADMIN_PASSWORD=change_me
     volumes:
