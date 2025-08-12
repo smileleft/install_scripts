@@ -1,0 +1,27 @@
+global:
+  scrape_interval: 15s
+
+# InfluxDB
+remote_write:
+  - url: "http://influxdb:8086/api/v1/prom/write?db=mydb"
+    basic_auth:
+      username: "grafana_user"
+      passowrd: "your_grafana_user_password"
+    queue_config:
+      capacity: 20000
+      max_shards: 10
+      max_samples_per_send: 5000
+      batch_send_deadline: 5s
+      min_backoff: 100ms
+      max_backoff: 5s
+
+remote_read:
+  - url: "http://influxdb:8086/api/v1/prom/read?db=mydb"
+    basic_auth:
+      username: "grafana_user"
+      passowrd: "your_grafana_user_password"
+
+scrape_configs:
+  - job_name: "prometheus"
+    static_configs:
+      - targets: ["localhost:9090"]
