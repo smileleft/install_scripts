@@ -1,7 +1,7 @@
 -- init.sql
 -- reports table
 
-CREATE DABASE sadb;
+CREATE DATABASE sadb;
 \connect sadb;
 
 CREATE TABLE IF NOT EXISTS reports (

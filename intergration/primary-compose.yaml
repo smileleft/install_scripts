@@ -29,7 +29,7 @@ services:
     image: infisical/infisical:latest
     container_name: infisical-primary
     ports:
-      - "8080:3000"
+      - "8080:8080"
     env_file:
       - ./.env
     environment:
@@ -37,26 +37,7 @@ services:
     depends_on:
       - postgres-primary
     restart: always
-
-  rabbitmq1:
-    image: rabbitmq:4.1.2-management
-    container_name: rabbitmq1
-    hostname: rabbitmq1
-    ports:
-      - "5672:5672" # AMQP port
-      - "15672:15672" # Management UI
-      - "25672:25672"   # Erlang Distribution Port
-      - "4369:4369"     # Erlang Port Mapper Daemon
-      - "15692:15692"   # Prometheus Metrics
-    volumes:
-      - rabbitmq-data:/var/lib/rabbitmq
-    environment:
-      - RABBITMQ_DEFAULT_USER=admin
-      - RABBITMQ_DEFAULT_PASS=your_strong_rabbit_password
-      - RABBITMQ_ERLANG_COOKIE=${RABBITMQ_ERLANG_COOKIE}
-      - RABBITMQ_NODENAME=rabbit@rabbitmq1
-    restart: always
-
+  
   redis-master:
     image: redis:7.2-alpine
     container_name: redis-master
@@ -86,8 +67,8 @@ services:
     volumes:
       - ./prometheus.yml:/etc/prometheus/prometheus.yml
       - prometheus_data:/prometheus
-    command:
-      - '--config.file=/etc/prometheus/prometheus.yml'
+    #command:
+    #  - '--config.file=/etc/prometheus/prometheus.yml'
     restart: always
 
   grafana:
@@ -95,7 +76,7 @@ services:
     container_name: grafana
     ports:
       - "3000:3000"
-    enviornment:
+    environment:
       - GF_DATABASE_TYPE=postgres
       - GF_DATABASE_HOST=postgres-primary:5432
       - GF_DATABASE_NAME=${DB_GRAFANA}
@@ -121,7 +102,6 @@ services:
 
 volumes:
   postgres-data:
-  rabbitmq-data:
   redis-master-data:
   prometheus_data:
   grafana_data:
