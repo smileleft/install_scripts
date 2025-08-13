@@ -6,7 +6,7 @@ remote_write:
   - url: "http://influxdb:8086/api/v1/prom/write?db=mydb"
     basic_auth:
       username: "grafana_user"
-      passowrd: "your_grafana_user_password"
+      password: "your_grafana_user_password"
     queue_config:
       capacity: 20000
       max_shards: 10
@@ -19,7 +19,7 @@ remote_read:
   - url: "http://influxdb:8086/api/v1/prom/read?db=mydb"
     basic_auth:
       username: "grafana_user"
-      passowrd: "your_grafana_user_password"
+      password: "your_grafana_user_password"
 
 scrape_configs:
   - job_name: "prometheus"
