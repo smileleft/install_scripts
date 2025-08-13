@@ -13,7 +13,7 @@ services:
     environment:
       - POSTGRES_USER=${POSTGRES_USER}
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
-      - POSTGRES_DB=default_db # 기본 DB, init-db.sh에서 실제 DB 생성
+      - POSTGRES_DB=default_db # default DB, real db init script is in init-db.sh
       - DB_SADB=${DB_SADB}
       - DB_INFISICAL=${DB_INFISICAL}
       - DB_GRAFANA=${DB_GRAFANA}
