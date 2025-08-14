@@ -64,7 +64,7 @@ CREATE TYPE role AS ENUM ('admin', 'viewer');
 -- users table
 CREATE TABLE users (
     id 			UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    empNumber		TEXT UNIQUE NOT NULL,
+    emp_number		TEXT UNIQUE NOT NULL,
     username 		TEXT NOT NULL,
     password_hash 	TEXT NOT NULL,
     role 		role NOT NULL,
