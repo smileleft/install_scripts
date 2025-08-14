@@ -5,12 +5,12 @@ services:
     image: pgvector/pgvector:pg17
     container_name: postgres-secondary
     depends_on:
-      - rabbitmq2 # RabbitMQ 클러스터 구성을 위해 먼저 실행
+      - rabbitmq2
     environment:
       - POSTGRES_USER=${POSTGRES_USER}
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
       - PRIMARY_SERVER_IP=${PRIMARY_SERVER_IP}
-      - PGDATA=/var/lib/postgresql/data/pgdata # entrypoint 스크립트에서 사용
+      - PGDATA=/var/lib/postgresql/data/pgdata
     volumes:
       - postgres-data-secondary:/var/lib/postgresql/data
       - ./postgres/entrypoint-replica.sh:/usr/local/bin/entrypoint-replica.sh
@@ -21,11 +21,11 @@ services:
     image: infisical/infisical:latest
     container_name: infisical-secondary
     ports:
-      - "8080:3000"
+      - "8080:8080"
     env_file:
       - ./.env
     environment:
-      # 평상시에는 Primary DB를 바라보고, Failover 시 Load Balancer/VIP가 트래픽을 이쪽으로 보냄
+      # Failover ->  Load Balancer/VIP sends traffic to this node
       - DB_CONNECTION_URI=postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${PRIMARY_SERVER_IP}:5432/${DB_INFISICAL}
     restart: always
 
@@ -34,7 +34,7 @@ services:
     container_name: rabbitmq2
     hostname: rabbit2
     depends_on:
-      - redis-replica # 순서 보장을 위해 추가
+      - redis-replica
     ports:
       - "15672:15672"   # Management UI
       - "5672:5672"     # AMQP
