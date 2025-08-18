@@ -8,6 +8,5 @@ services:
     ports:
       - "26379:26379"
     volumes:
-      # 서버 1, 2와 동일한 sentinel.conf 파일을 사용합니다.
       - ./redis/sentinel.conf:/usr/local/etc/redis/sentinel.conf
     restart: always
