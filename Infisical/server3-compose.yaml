@@ -1,0 +1,73 @@
+version: '3.8'
+
+services:
+  infisical:
+    image: infisical/infisical:latest-postgres
+    container_name: infisical
+    depends_on:
+      - postgres
+      - redis
+    environment:
+      - NODE_ENV=production
+      - DATABASE_URL=postgresql://infisical:infisical@postgres:5432/infisical
+      - REDIS_URL=redis://redis:6379
+    ports:
+      - "8080:8080"
+    restart: unless-stopped
+
+  etcd:
+    image: quay.io/coreos/etcd
+    container_name: etcd
+    command: >
+      etcd -name etcd3
+           -initial-advertise-peer-urls http://10.0.0.3:2380
+           -listen-peer-urls http://0.0.0.0:2380
+           -listen-client-urls http://0.0.0.0:2379
+           -advertise-client-urls http://10.0.0.3:2379
+           -initial-cluster etcd1=http://10.0.0.1:2380,etcd2=http://10.0.0.2:2380,etcd3=http://10.0.0.3:2380
+           -initial-cluster-token etcd-cluster
+           -initial-cluster-state **existing
+
+  postgres:
+    image: registry.developers.crunchydata.com/crunchydata/patroni:latest
+    container_name: postgres
+    environment:
+      - PATRONI_NAME=postgres3
+      - PATRONI_ETCD_HOSTS=10.0.0.1:2379,10.0.0.2:2379,10.0.0.3:2379
+      - PATRONI_SCOPE=infisical
+      - PATRONI_POSTGRESQL_DATA_DIR=/pgdata
+      - PATRONI_REST_API_CONNECT_ADDRESS=10.0.0.3:8008
+      - PATRONI_POSTGRESQL_CONNECT_ADDRESS=10.0.0.3:5432
+      - PATRONI_SUPERUSER_USERNAME=postgres
+      - PATRONI_SUPERUSER_PASSWORD=postgres
+      - PATRONI_REPLICATION_USERNAME=replicator
+      - PATRONI_REPLICATION_PASSWORD=replicator
+      - PATRONI_ADMIN_USERNAME=admin
+      - PATRONI_ADMIN_PASSWORD=admin
+    volumes:
+      - pgdata:/pgdata
+    ports:
+      - "5432:5432"
+      - "8008:8008"
+    depends_on:
+      - etcd
+
+  redis:
+    image: redis:7-alpine
+    container_name: redis
+    command: >
+      redis-server --port 6379
+                   --cluster-enabled yes
+                   --cluster-config-file nodes.conf
+                   --cluster-node-timeout 5000
+                   --appendonly yes
+                   --cluster-announce-ip 10.0.0.3
+                   --cluster-announce-port 6379
+    volumes:
+      - redis_data:/data
+    ports:
+      - "6379:6379"
+
+volumes:
+  pgdata:
+  redis_data:
