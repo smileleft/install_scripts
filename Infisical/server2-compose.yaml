@@ -29,7 +29,7 @@ services:
            -initial-cluster-state **existing
 
   postgres:
-    image: registry.developers.crunchydata.com/crunchydata/patroni:latest
+    image: smileleft/patroni:latest
     container_name: postgres
     environment:
       - PATRONI_NAME=postgres2
