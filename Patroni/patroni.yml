@@ -1,18 +1,11 @@
-scope: mycluster
+scope: infisical
 namespace: /db/
-name: node1
 
 restapi:
   listen: 0.0.0.0:8008
-  connect_address: 127.0.0.1:8008
-
-etcd:
-  host: 127.0.0.1:2379
 
 postgresql:
   listen: 0.0.0.0:5432
-  connect_address: 127.0.0.1:5432
-  data_dir: /var/lib/postgresql/data
   authentication:
     superuser:
       username: postgres
@@ -20,3 +13,28 @@ postgresql:
     replication:
       username: replicator
       password: replicator
+  data_dir: /pgdata/data
+  pg_hba:
+    - local   all          all                       peer
+    - host    all          all           127.0.0.1/32 md5
+    - host    all          all           ::1/128      md5
+    - host    replication  replicator   10.0.10.33/32 md5
+    - host    replication  replicator   10.0.10.37/32 md5
+    - host    replication  replicator   10.0.10.39/32 md5
+    - host    all          all           10.0.10.0/24 md5
+    - host    replication  replicator   127.0.0.1/32 md5
+    - host    replication  replicator   ::1/128      md5
+
+bootstrap:
+  dcs:
+    postgresql:
+      use_pg_rewind: true
+      parameters:
+        wal_level: replica
+        hot_standby: "on"
+        max_wal_senders: 10
+        max_replication_slots: 10
+        listen_addresses: '0.0.0.0'
+  initdb:
+    - encoding: UTF8
+    - data-checksums
