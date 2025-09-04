@@ -1,73 +1,101 @@
-version: '3.8'
-
 services:
   infisical:
     image: infisical/infisical:latest-postgres
     container_name: infisical
     depends_on:
-      - postgres
-      - redis
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_started
     environment:
       - NODE_ENV=production
-      - DATABASE_URL=postgresql://infisical:infisical@postgres:5432/infisical
+      - DATABASE_URL=postgresql://postgres:postgres@postgres:5432/infisical
       - REDIS_URL=redis://redis:6379
     ports:
       - "8080:8080"
     restart: unless-stopped
 
   etcd:
-    image: quay.io/coreos/etcd:v3.6.4
+    image: gcr.io/etcd-development/etcd:v3.5.9
     container_name: etcd
-    environment:
-      - SERVER-1=${SERVER-1}
-      - SERVER-2=${SERVER-2}
-      - SERVER-3=${SERVER-3}
+    ports:
+      - "2379:2379"
+      - "2380:2380"
     command: >
-      etcd -name etcd3
-           -initial-advertise-peer-urls http://${SERVER-3}:2380
-           -listen-peer-urls http://0.0.0.0:2380
-           -listen-client-urls http://0.0.0.0:2379
-           -advertise-client-urls http://10.0.0.3:2379
-           -initial-cluster etcd1=http://${SERVER-1}:2380,etcd2=http://${SERVER-2}:2380,etcd3=http://${SERVER-3}:2380
-           -initial-cluster-token etcd-cluster
-           -initial-cluster-state **existing
+      etcd --name etcd3
+           --initial-advertise-peer-urls http://10.0.10.33:2380
+           --listen-peer-urls http://0.0.0.0:2380
+           --listen-client-urls http://0.0.0.0:2379
+           --advertise-client-urls http://10.0.10.33:2379
+           --initial-cluster etcd1=http://10.0.10.37:2380,etcd2=http://10.0.10.39:2380,etcd3=http://10.0.10.33:2380
+           --initial-cluster-token etcd-cluster
+           --initial-cluster-state new
+    healthcheck:
+      test: ["CMD", "etcdctl", "--endpoints=http://localhost:2379", "endpoint", "health"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
+
+  pgdata-init:
+    image: smileleft/patroni:2.1
+    container_name: pgdata-init
+    user: "0"
+    command: >
+      sh -c "mkdir -p /pgdata/data && chown -R 999:999 /pgdata && chmod 700 /pgdata/data"
+    volumes:
+      - pgdata:/pgdata
+    restart: "no"
 
   postgres:
-    image: smileleft/patroni:latest
+    image: smileleft/patroni:2.1
     container_name: postgres
+    user: "postgres"
     environment:
       - PATRONI_NAME=postgres3
-      - PATRONI_ETCD_HOSTS=${SERVER-1}:2379,${SERVER-2}:2379,${SERVER-3}:2379
+      - PATRONI_ETCD3_HOSTS=10.0.10.37:2379,10.0.10.39:2379,10.0.10.33:2379
+      - PATRONI_ETCD3_PROTOCOL=http
       - PATRONI_SCOPE=infisical
-      - PATRONI_POSTGRESQL_DATA_DIR=/pgdata
-      - PATRONI_REST_API_CONNECT_ADDRESS=${SERVER-3}:8008
-      - PATRONI_POSTGRESQL_CONNECT_ADDRESS=${SERVER-3}:5432
+      - PATRONI_POSTGRESQL_DATA_DIR=/pgdata/data
+      - PATRONI_RESTAPI_CONNECT_ADDRESS=10.0.10.33:8008
+      - PATRONI_POSTGRESQL_CONNECT_ADDRESS=10.0.10.33:5432
       - PATRONI_SUPERUSER_USERNAME=postgres
       - PATRONI_SUPERUSER_PASSWORD=postgres
       - PATRONI_REPLICATION_USERNAME=replicator
       - PATRONI_REPLICATION_PASSWORD=replicator
       - PATRONI_ADMIN_USERNAME=admin
       - PATRONI_ADMIN_PASSWORD=admin
+      - PATRONI_POSTGRESQL_LISTEN=0.0.0.0:5432
+      - PATRONI_RESTAPI_LISTEN=0.0.0.0:8008
+      - PATRONI_POSTGRESQL_BIN_DIR=/usr/lib/postgresql/17/bin
+
     volumes:
       - pgdata:/pgdata
     ports:
       - "5432:5432"
       - "8008:8008"
     depends_on:
-      - etcd
+      etcd:
+        condition: service_healthy
+      pgdata-init:
+        condition: service_completed_successfully
+    healthcheck:
+      test: "pg_isready --username=postgres && psql --username=postgres -h localhost --list"
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 90s
 
   redis:
     image: redis:7-alpine
     container_name: redis
-    environment:
-      - SERVER-3=${SERVER-3}
     command: >
       redis-server --port 6379
                    --cluster-enabled yes
                    --cluster-config-file nodes.conf
                    --cluster-node-timeout 5000
                    --appendonly yes
-                   --cluster-announce-ip ${SERVER-3}
+                   --cluster-announce-ip 10.0.10.33
                    --cluster-announce-port 6379
     volumes:
       - redis_data:/data
@@ -75,5 +103,5 @@ services:
       - "6379:6379"
 
 volumes:
-  pgdata:
+  pgdata: {}
   redis_data:
