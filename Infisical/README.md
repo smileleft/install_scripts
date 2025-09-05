@@ -6,3 +6,9 @@ server 3 : 10.0.0.3
 
 ## init redis cluster
 execute init-redis.sh once in server 1  
+
+## make pgdata permission
+
+```
+sudo mkdir -p /pgdata/data && chown -R 999:999 /pgdata && chmod 700 /pgdata/data
+```
