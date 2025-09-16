@@ -1,0 +1,16 @@
+    version: '3.8'
+    services:
+      vault:
+        image: vault:latest
+        container_name: vault
+        ports:
+          - "8200:8200"
+        environment:
+          VAULT_ADDR: "http://0.0.0.0:8200"
+          VAULT_API_ADDR: "http://0.0.0.0:8200"
+        cap_add:
+          - IPC_LOCK # Required for Vault to secure memory
+        volumes:
+          - ./vault/config:/vault/config # Mount a local config directory
+          - ./vault/data:/vault/data # Mount a local data directory for persistent storage
+        command: vault server -config=/vault/config/vault.json
