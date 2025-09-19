@@ -1,0 +1,13 @@
+services:
+  patroni-1:
+    image: ongres/patroni
+    container_name: patroni-1
+    ports:
+      - "5433:5432"
+      - "8008:8008"
+    environment:
+      PATRONI_K8S_LABELS: '{"cluster-name": "demo"}'
+    volumes:
+      - ./patroni-1.yml:/config/patroni.yml
+      - ./pgdata:/home/postgres/pgdata
+    command: patroni /config/patroni.yml
