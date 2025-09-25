@@ -1,0 +1,22 @@
+services:
+  standby:
+    build:
+      context: ./standby
+      args:
+        PG_VERSION: ${PG_VERSION}
+    container_name: pg-standby
+    environment:
+      POSTGRES_USER: ${PG_USER}
+      POSTGRES_PASSWORD: ${PG_PASSWORD}
+      REPL_USER: ${REPL_USER}
+      REPL_PASSWORD: ${REPL_PASSWORD}
+      PRIMARY_HOST: ${PRIMARY_HOST}
+      PRIMARY_PORT: ${PRIMARY_PORT}
+    volumes:
+      - pgdata_standby:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    restart: unless-stopped
+
+volumes:
+  pgdata_standby:
