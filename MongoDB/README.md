@@ -19,3 +19,14 @@ sudo systemctl enable mongod
 # Verify Installation
 mongosh
 ```
+
+## Run with Docker
+```
+docker run -d \
+      --name mongodb_instance \
+      -p 27017:27017 \
+      -v mongodb_data:/data/db \
+      -e MONGO_INITDB_ROOT_USERNAME={your mongodb admin name} \
+      -e MONGO_INITDB_ROOT_PASSWORD={your mongodb password} \
+      mongo:latest
+```
