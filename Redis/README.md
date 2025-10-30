@@ -18,7 +18,7 @@ sudo systemctl status redis-server
 sudo systemctl enable redis-server
 ```
 
-## Install with Docker
+## Run with Docker
 ```
 docker run -d \
   --name redis \
