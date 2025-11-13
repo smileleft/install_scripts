@@ -28,6 +28,9 @@ user=mysql
 
 # start MySQL server
 /user/local/mysql/support-files/mysql.server start
+
+# post-install setup
+/usr/local/mysql/bin/mysql_secure_installation
 ```
 
 ## Install with Docker
