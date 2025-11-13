@@ -39,5 +39,16 @@ docker run \
   --publish 2376:2376 \
   docker:dind \
   --storage-driver overlay2
+```
 
+## Install with WAR
+```
+# download WAR
+https://www.jenkins.io/download
+
+# run with WAR
+java -jar jenkins.war
+
+# check
+http://localhost:8000
 ```
