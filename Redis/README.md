@@ -30,3 +30,9 @@ docker run -d \
   redis:latest \
   redis-server --requirepass your_strong_redis_password
 ```
+
+## simple cluster (1 master & 2 replicas)
+
+```bash
+docker compose -f simple-cluster-compose.yaml up -d
+```
