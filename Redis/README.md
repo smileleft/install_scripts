@@ -34,5 +34,9 @@ docker run -d \
 ## simple cluster (1 master & 2 replicas)
 
 ```bash
+# start cluster
 docker compose -f simple-cluster-compose.yaml up -d
+
+# check replication
+docker exec redis-master redis-cli -a redis123 INFO replication
 ```
