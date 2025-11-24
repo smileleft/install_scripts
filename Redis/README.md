@@ -40,3 +40,13 @@ docker compose -f simple-cluster-compose.yaml up -d
 # check replication
 docker exec redis-master redis-cli -a redis123 INFO replication
 ```
+
+## sharding cluster (3 master & 3 replicas)
+
+```bash
+# check cluster status
+docker exec redis-node-1 redis-cli -c -p 6379 -a redis123 CLUSTER NODES
+
+# test
+docker exec -it redis-node-1 redis-cli -c -p 6379 -a redis123
+```
