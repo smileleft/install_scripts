@@ -1,7 +1,8 @@
 # Redis
 
 ## Install
-```
+
+```bash
 sudo apt update && sudo apt upgrade
 sudo apt install redis-server
 
@@ -19,7 +20,8 @@ sudo systemctl enable redis-server
 ```
 
 ## Run with Docker
-```
+
+```bash
 docker run -d \
   --name redis \
   -p 6379:6379 \
