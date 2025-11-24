@@ -1,0 +1,123 @@
+version: '3.8'
+
+services:
+  redis-node-1:
+    image: redis:7.4.1-alpine
+    container_name: redis-node-1
+    command: redis-server --port 6379 --cluster-enabled yes --cluster-config-file nodes.conf --cluster-node-timeout 5000 --appendonly yes --requirepass redis123 --masterauth redis123
+    ports:
+      - "6379:6379"
+      - "16379:16379"
+    volumes:
+      - redis-node-1:/data
+    networks:
+      redis-cluster:
+        ipv4_address: 172.30.0.11
+
+  redis-node-2:
+    image: redis:7.4.1-alpine
+    container_name: redis-node-2
+    command: redis-server --port 6380 --cluster-enabled yes --cluster-config-file nodes.conf --cluster-node-timeout 5000 --appendonly yes --requirepass redis123 --masterauth redis123
+    ports:
+      - "6380:6380"
+      - "16380:16380"
+    volumes:
+      - redis-node-2:/data
+    networks:
+      redis-cluster:
+        ipv4_address: 172.30.0.12
+
+  redis-node-3:
+    image: redis:7.4.1-alpine
+    container_name: redis-node-3
+    command: redis-server --port 6381 --cluster-enabled yes --cluster-config-file nodes.conf --cluster-node-timeout 5000 --appendonly yes --requirepass redis123 --masterauth redis123
+    ports:
+      - "6381:6381"
+      - "16381:16381"
+    volumes:
+      - redis-node-3:/data
+    networks:
+      redis-cluster:
+        ipv4_address: 172.30.0.13
+
+  redis-node-4:
+    image: redis:7.4.1-alpine
+    container_name: redis-node-4
+    command: redis-server --port 6382 --cluster-enabled yes --cluster-config-file nodes.conf --cluster-node-timeout 5000 --appendonly yes --requirepass redis123 --masterauth redis123
+    ports:
+      - "6382:6382"
+      - "16382:16382"
+    volumes:
+      - redis-node-4:/data
+    networks:
+      redis-cluster:
+        ipv4_address: 172.30.0.14
+
+  redis-node-5:
+    image: redis:7.4.1-alpine
+    container_name: redis-node-5
+    command: redis-server --port 6383 --cluster-enabled yes --cluster-config-file nodes.conf --cluster-node-timeout 5000 --appendonly yes --requirepass redis123 --masterauth redis123
+    ports:
+      - "6383:6383"
+      - "16383:16383"
+    volumes:
+      - redis-node-5:/data
+    networks:
+      redis-cluster:
+        ipv4_address: 172.30.0.15
+
+  redis-node-6:
+    image: redis:7.4.1-alpine
+    container_name: redis-node-6
+    command: redis-server --port 6384 --cluster-enabled yes --cluster-config-file nodes.conf --cluster-node-timeout 5000 --appendonly yes --requirepass redis123 --masterauth redis123
+    ports:
+      - "6384:6384"
+      - "16384:16384"
+    volumes:
+      - redis-node-6:/data
+    networks:
+      redis-cluster:
+        ipv4_address: 172.30.0.16
+
+  redis-cluster-init:
+    image: redis:7.4.1-alpine
+    container_name: redis-cluster-init
+    depends_on:
+      - redis-node-1
+      - redis-node-2
+      - redis-node-3
+      - redis-node-4
+      - redis-node-5
+      - redis-node-6
+    command: >
+      sh -c "
+      sleep 5 &&
+      redis-cli --cluster create
+      172.30.0.11:6379
+      172.30.0.12:6380
+      172.30.0.13:6381
+      172.30.0.14:6382
+      172.30.0.15:6383
+      172.30.0.16:6384
+      --cluster-replicas 1
+      -a redis123
+      --cluster-yes
+      "
+    networks:
+      - redis-cluster
+    restart: "no"
+
+networks:
+  redis-cluster:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.30.0.0/16
+
+volumes:
+  redis-node-1:
+  redis-node-2:
+  redis-node-3:
+  redis-node-4:
+  redis-node-5:
+  redis-node-6:
