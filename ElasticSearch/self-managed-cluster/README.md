@@ -8,6 +8,15 @@ ulimit -n 65535
 su elasticsearch
 ```
 
+## /etc/security/limits.conf
+
+```bash
+# edit /etc/security/limits.conf file, insert below line
+elasticsearch  -  nofile  65535
+
+# for ubuntu, you need to edit /etc/pam.d/su instead of /etc/security/limits.conf
+# session    required   pam_limits.so
+```
 
 ## download and install (30-day trial)
 
