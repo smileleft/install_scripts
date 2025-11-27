@@ -18,6 +18,16 @@ elasticsearch  -  nofile  65535
 # session    required   pam_limits.so
 ```
 
+## /usr/lib/systemd/system/elasticsearch.service file
+
+```bash
+[Service]
+LimitMEMLOCK=infinity
+
+# and daemon restart
+sudo systemctl daemon-reload
+```
+
 ## download and install (30-day trial)
 
 ```bash
