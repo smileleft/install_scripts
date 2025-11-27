@@ -40,4 +40,12 @@ docker cp es01:/usr/share/elasticsearch/config/certs/http_ca.crt .
 
 # make a REST api call to ElasticSearch to ensure the ElasticSearch container is running
 curl --cacert http_ca.crt -u elastic:$ELASTIC_PASSWORD https://localhost:9200
+
+# run Kibana
+docker pull docker.elastic.co/kibana/kibana:9.2.1
+docker run --name kib01 --net elastic -p 5601:5601 docker.elastic.co/kibana/kibana:9.2.1
+
+# enrollment token for Kibana
+docker exec -it es01 /usr/share/elasticsearch/bin/elasticsearch-create-enrollment-token -s kibana
+
 ```
