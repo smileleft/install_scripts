@@ -1,4 +1,12 @@
-# self-managed ElasticSearch cluster on Linux
+# system config
+
+## ulimit
+
+```bash
+sudo su
+ulimit -n 65535
+su elasticsearch
+```
 
 
 ## download and install (30-day trial)
