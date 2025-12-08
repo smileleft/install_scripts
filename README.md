@@ -40,6 +40,8 @@ n8n-compose.yaml  <br>
 
 ## Flink
 
+## AutoMQ
+
 infisical-compose.yaml <br>
 
 ## env
