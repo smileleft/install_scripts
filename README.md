@@ -42,6 +42,10 @@ n8n-compose.yaml  <br>
 
 ## AutoMQ
 
+## ElasticSearch
+
+## MongoDB
+
 infisical-compose.yaml <br>
 
 ## env
