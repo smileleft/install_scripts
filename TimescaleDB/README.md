@@ -17,4 +17,7 @@ wget --quiet -O - https://packagecloud.io/timescale/timescaledb/gpgkey | sudo gp
 
 # update local repository list
 sudo apt update
+
+# install TimescaleDB
+sudo apt install timescaledb-2-postgresql-18 postgresql-client-18
 ```
