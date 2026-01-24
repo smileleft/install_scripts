@@ -27,3 +27,10 @@ sudo timescaledb-tune
 # restart postgreSQL
 sudo systemctl restart postgresql
 ```
+
+## Post Install
+
+```bash
+# login postgreSQL
+sudo -u postgres psql
+```
