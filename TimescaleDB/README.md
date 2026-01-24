@@ -33,4 +33,7 @@ sudo systemctl restart postgresql
 ```bash
 # login postgreSQL
 sudo -u postgres psql
+
+# set the password for postgreSQL
+\password postgres
 ```
