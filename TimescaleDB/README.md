@@ -20,4 +20,7 @@ sudo apt update
 
 # install TimescaleDB
 sudo apt install timescaledb-2-postgresql-18 postgresql-client-18
+
+# tune your postgreSQL instance for TimescaleDB
+sudo timescaledb-tune
 ```
