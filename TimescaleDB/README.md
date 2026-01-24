@@ -1,6 +1,6 @@
 # TimescaleDB
 
-## Install
+## Install (for Ubuntu 22.04 or later)
 
 ```bash
 # install the latest postgresSQL packages
